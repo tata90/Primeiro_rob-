@@ -18,7 +18,7 @@ class emissao_guias:
     # #dataInicialFatoGerador
     # #dataFinalFatoGerador
     def add_date(self):
-        self.page.locator("#dataInicialFatoGerador").clear(delay=100)
+        self.page.locator("#dataInicialFatoGerador").clear()
         self.page.locator("#dataInicialFatoGerador").type("01/01/2024", delay=100) # quem vai colocar a data é o usuário
         self.page.wait_for_timeout(1000)
         self.page.locator("#dataFinalFatoGerador").type("31/01/2024", delay=100) # quem vai colocar a data é o usuário
@@ -28,7 +28,7 @@ class emissao_guias:
     def search(self):
         self.page.locator("#pesquisar").click()
     
-    # I.E. + pesquisar
+# I.E.
     # #contribuinteCredenciado
     def add_ie(self):
         excel_path = Path(__file__).parent / "Ceara_filiais.xlsx"
@@ -45,14 +45,14 @@ class emissao_guias:
             self.search()
             self.page.wait_for_timeout(1000)
             
-            if self.page.locator("button:has-text('OK')").is_visible():
+            try:
+                self.page.locator("button:has-text('OK')").wait_for(state="visible", timeout=3000)
                 print(f"Error processing I.E. {ie_number}")
                 self.page.locator("button:has-text('OK')").click()
                 self.page.wait_for_timeout(1000)
-                continue
-            
-
-            self.save_pdf(ie_number, "01", "2024")
+            except:
+                self.save_pdf(ie_number, "01", "2024") #de novo, mes e ano vem do usuário - resolve isso
+                pass
             
 
 # Salvar o relatório em PDF - considerando que esse arquivo ta dentro de Apuração ICMS > Ceará
@@ -72,4 +72,5 @@ class emissao_guias:
 if __name__ == "__main__":
     p = emissao_guias()
     p.add_ie()
+
     p.close()
